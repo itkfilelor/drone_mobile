@@ -13,3 +13,22 @@ I make no promises that this module won't blow up your car, fry your remote star
 
 USE AT OWN RISK!!!
 cheers! =) 
+
+
+USAGE EXAMPLE:
+
+api = DroneMobile(user=<username>,secret=<password>,deviceKey=<DroneMobile vehicle 'DeviceKey'>,vin=<vehicle VIN>,tokenJSON=<location to tokens file>)
+  
+response = api.sendCommand('remote_start')
+
+AVAILABLE COMMANDS: 
+    'trunk',
+    'remote_start',
+    'remote_stop',
+    'arm',
+    'disarm',
+    'panic',
+    'remote_aux1',
+    'remote_aux2',
+    'location'
+
