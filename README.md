@@ -17,7 +17,7 @@ cheers! =)
 
 USAGE EXAMPLE:
 
-api = DroneMobile(user=<username>,secret=<password>,deviceKey=<DroneMobile vehicle 'DeviceKey'>,vin=<vehicle VIN>,tokenJSON=<location to tokens file>)
+api = DroneMobile(user=[username],secret=[password],deviceKey=[DroneMobile vehicle 'DeviceKey'],vin=[vehicle VIN],tokenJSON=[location to tokens file])
   
 response = api.sendCommand('remote_start')
 
