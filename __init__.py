@@ -7,7 +7,7 @@ from os import path
 import requests as r
 import logging
 import json
-import os
+# import os
 
 # from exceptions import 
 
@@ -81,9 +81,13 @@ class DroneMobile():
         self.vehicleInfoGet()
 
     def authenticate(self):
-
-        #get IdToken using refresh token, time out is unknown at this time
-        if self.RefreshToken is not None:
+        #get IdToken via user/secret authentication
+        if self.user and self.secret:
+            _body = self.user_password_auth(self.user,self.secret)
+            log.info('Using user/pass')
+            _method = 'User/Password Combo'
+        #get IdToken using refresh token, time out appears to be about 3 months 
+        elif self.RefreshToken is not None:
             if self.IdToken_expires > time():
                 log.info('IdToken is still valid')
                 _method = 'IdToken'
@@ -94,16 +98,8 @@ class DroneMobile():
                 _body = self.refresh_token_auth(self.RefreshToken)
                 log.info('Using refresh_token')
                 _method = 'Refresh Token'
-
         else:
-            #get IdToken via user/secret authentication
-            if self.user and self.secret:
-                _body = self.user_password_auth(self.user,self.secret)
-                log.info('Using user/pass')
-                _method = 'User/Password Combo'
-
-            else:
-                raise Exception("Must provide a valid user/password combination.")
+            raise Exception("Must provide a valid user/password combination.")
 
         _headers = AUTH_HEADERS
         
@@ -111,9 +107,8 @@ class DroneMobile():
             _response = r.post(URLS['auth'], headers=_headers, data=_body) 
             _response.raise_for_status()
         except HTTPError as h:
-            raise Exception (h + ' ' +  _response.json()['message'])
-            
-
+            message = _response.json()['message']
+            raise Exception (f'{h} {message}')
         except Exception as e:  
             log.error(e ,exc_info=True)
             log.error(_response.text)
@@ -179,7 +174,7 @@ class DroneMobile():
             _response.raise_for_status()
         except Exception as e:
 
-            return e + ' ' + _response
+            return f'{e}  {_response}'
         else:
             _results = _response.json()['results']
             for _result in _results:
@@ -194,7 +189,7 @@ class DroneMobile():
                         log.info('found deviceKey in results')
                         self.vehicleInfo = _result
                 elif self.vehicle_name:
-                    _test_key = result.vehicle_name
+                    _test_key = _result.vehicle_name
                     log.info('found vehicle_name in results')
                     self.vehicleInfo = _result
                 else: 
